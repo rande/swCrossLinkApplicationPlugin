@@ -1,0 +1,37 @@
+# Cross Application Routing
+
+ More info at : http://rabaix.net/en/articles/2009/07/13/cross-link-application-with-symfony-part-2
+
+* Enable the feature, edit your app.yml
+
+        [yml]
+        all:
+          swToolbox:
+            cross_link_application:
+              frontend:
+                enabled: on                     # enable the feature
+                load:
+                  backend:
+                    dev: rabaix.net/backend.php   # define the full path for the dev environnement
+                    prod: rabaix.net/backend      # define the full path for the prod environnement
+              backend:
+                enabled: on                     # enable the feature for the
+                load:
+                  frontend:
+                    dev: rabaix.net/frontend_dev.php
+                    prod: rabaix.net
+
+*edit your factories.yml
+
+        [yml]
+        all:
+          routing:
+            class: swPatternRouting
+
+* In your frontend's template, you can access to a backend route like this
+
+        [php]
+        <?php link_to('Edit Blog Post', '@backend.edit_post?id='.$blog->getId()) ?>
+
+* that's all !!
+
