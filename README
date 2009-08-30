@@ -21,7 +21,7 @@
                     dev: rabaix.net/frontend_dev.php
                     prod: rabaix.net
 
-*edit your factories.yml
+* Edit your factories.yml
 
         [yml]
         all:
