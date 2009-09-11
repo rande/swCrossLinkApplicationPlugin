@@ -21,7 +21,8 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
   
   protected 
     $app,
-    $host;
+    $host,
+    $routes;
   
   public function setApp($app)
   {
@@ -42,7 +43,17 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
   {
     return $this->host;
   }
-  
+
+  public function setRoutes($routes)
+  {
+    $this->routes = $routes;
+  }
+
+  public function getRoutes()
+  {
+    return $this->routes;
+  }
+
   protected function parse($configFiles)
   {
     $routes = parent::parse($configFiles);
@@ -58,14 +69,31 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
     
     return $new_routes;
   }
-  
+
+  public function getOriginalName($name)
+  {
+
+    return substr($name, strpos($name, '.') + 1);
+  }
+
   public function evaluate($configFiles)
   {
     $routeDefinitions = $this->parse($configFiles);
     
     $routes = array();
+    $limit  = count($this->routes) > 0;
+
     foreach ($routeDefinitions as $name => $route)
     {
+
+      
+      // we only load routes defined in the app.yml from
+      if($limit && !in_array($this->getOriginalName($name), $this->routes))
+      {
+
+        continue;
+      }
+
       $r = new ReflectionClass($route[0]);
       
       if($r->isSubclassOf('sfRouteCollection'))

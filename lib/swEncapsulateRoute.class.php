@@ -35,6 +35,15 @@ class swEncapsulateRoute extends sfRoute implements Serializable
     return call_user_func_array(array($this->route, $method), $arguments);
   }
 
+  protected function compile()
+  {
+    if ($this->compiled)
+    {
+      return;
+    }
+
+    $this->compiled = true;
+  }
 
   public function serialize()
   {
@@ -91,8 +100,9 @@ class swEncapsulateRoute extends sfRoute implements Serializable
   
   public function matchesParameters($params, $context = array())
   {
-
-    return $this->route->matchesParameters($params, $context = array());
+    // always return false to not match current application routes
+    
+    return false;
   }
   
   public function getPattern()

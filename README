@@ -1,6 +1,10 @@
 # Cross Application Routing
 
- More info at : http://rabaix.net/en/articles/2009/07/13/cross-link-application-with-symfony-part-2
+More info at : http://rabaix.net/en/articles/2009/07/13/cross-link-application-with-symfony-part-2
+
+
+## Installation
+
 
 * Enable the feature, edit your app.yml
 
@@ -9,17 +13,26 @@
           swToolbox:
             cross_link_application:
               frontend:
-                enabled: on                     # enable the feature
+                enabled: on                         # enable the feature
                 load:
                   backend:
-                    dev: rabaix.net/backend.php   # define the full path for the dev environnement
-                    prod: rabaix.net/backend      # define the full path for the prod environnement
+                    routes:                         # routes to load, leave empty will load all the routes
+                      - homepage
+                      - edit_blog
+                    env:                            # define the environment
+                      dev: rabaix.net/backend.php   # define the full path for the dev environnement
+                      prod: rabaix.net/backend      # define the full path for the prod environnement
+
               backend:
-                enabled: on                     # enable the feature for the
+                enabled: on                     
                 load:
                   frontend:
-                    dev: rabaix.net/frontend_dev.php
-                    prod: rabaix.net
+                    routes:
+                      - homepage
+                      - edit_blog
+                    env:
+                      dev: rabaix.net/frontend_dev.php
+                      prod: rabaix.net
 
 * Edit your factories.yml
 
@@ -35,3 +48,31 @@
 
 * that's all !!
 
+
+
+## Performance
+
+
+If you load too many routes, the application can be very slow in development. You can
+save seconds by simply turn off the debug options.
+
+        [yml]
+        all:
+          routing:
+            class: swPatternRouting
+            param:
+              debug: false # default is true in dev mode.
+
+Of course don't forget to reload the cache once the routing.yml file is updated
+
+
+Please take a note that the default cache handler for routing is the sfFileCache.
+This can also slow down the application because php has to serialize and unserialize
+the cache.
+
+Some input :
+
+* 1150 routes generates a 3MBytes cache file
+* 356 routes generates a 1MBytes cache file
+
+So in production you might need to tweak the routing caching strategy
