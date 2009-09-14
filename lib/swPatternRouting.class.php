@@ -17,39 +17,41 @@
  */
 class swPatternRouting extends sfPatternRouting
 {
-  
+
   protected
     $context_routes = null;
-    
+
   /**
    * overwrite the sfPatternRouting to handle the cross link application feature
-   * 
+   *
    * does not call sfPatternRouting::fixGeneratedUrl if the route is an application link
-   * 
+   *
    * @see sfPatternRouting#generate($name, $params, $absolute)
    */
   public function generate($name, $params = array(), $absolute = false)
   {
+
    // fetch from cache
     if (!is_null($this->cache))
     {
       $cacheKey = 'generate_'.$name.'_'.md5(serialize(array_merge($this->defaultParameters, $params))).'_'.md5(serialize($this->options['context']));
-      $url = $this->cache->get('symfony.routing.data.'.$cacheKey);
-      
-      if ($this->options['lookup_cache_dedicated_keys'] && $url)
+
+      if ($this->options['lookup_cache_dedicated_keys'] && $url = $this->cache->get('symfony.routing.data.'.$cacheKey))
       {
-        
+
         return strpos($name, '.') ? $url : $this->fixGeneratedUrl($url, $absolute);
       }
       elseif (isset($this->cacheData[$cacheKey]))
       {
 
-        return strpos($name, '.') ? $url : $this->fixGeneratedUrl($this->cacheData[$cacheKey], $absolute);
+        return strpos($name, '.') ? $this->cacheData[$cacheKey] : $this->fixGeneratedUrl($this->cacheData[$cacheKey], $absolute);
       }
+      
     }
 
     if ($name)
     {
+
       // named route
       if (!isset($this->routes[$name]))
       {
@@ -58,7 +60,7 @@ class swPatternRouting extends sfPatternRouting
         {
           throw new sfConfigurationException(sprintf('The route "%s" does not exist.', $name));
         };
-        
+
         $name = $application_name;
       }
 
@@ -97,7 +99,7 @@ class swPatternRouting extends sfPatternRouting
 
     return strpos($name, '.') ? $url : $this->fixGeneratedUrl($url, $absolute);
   }
-  
+
   protected function getApplicationRoute($route_name)
   {
     if(is_null($this->context_routes))
@@ -109,23 +111,23 @@ class swPatternRouting extends sfPatternRouting
         {
           continue;
         }
-        
+
         $this->context_routes[substr($name, $pos + 1)] = $name;
       }
     }
-    
+
     if(!is_array($this->context_routes))
     {
-      
+
       return false;
     }
-    
+
     if(!array_key_exists($route_name, $this->context_routes))
     {
-      
+
       return false;
     }
-    
+
     return $this->context_routes[$route_name];
   }
 }

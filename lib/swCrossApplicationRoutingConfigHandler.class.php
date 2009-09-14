@@ -18,27 +18,27 @@
  */
 class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
 {
-  
-  protected 
+
+  protected
     $app,
     $host,
     $routes;
-  
+
   public function setApp($app)
   {
     $this->app = $app;
   }
-  
+
   public function getApp()
   {
     return $this->app;
   }
-  
+
   public function setHost($host)
   {
     $this->host = $host;
   }
-  
+
   public function getHost()
   {
     return $this->host;
@@ -57,7 +57,7 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
   protected function parse($configFiles)
   {
     $routes = parent::parse($configFiles);
-    
+
     $new_routes = array();
     foreach($routes as $name => $route)
     {
@@ -66,7 +66,7 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
       $new_routes[$name][1][2]['sw_app'] = $this->app;
       $new_routes[$name][1][2]['sw_host'] = $this->host;
     }
-    
+
     return $new_routes;
   }
 
@@ -79,14 +79,14 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
   public function evaluate($configFiles)
   {
     $routeDefinitions = $this->parse($configFiles);
-    
+
     $routes = array();
     $limit  = count($this->routes) > 0;
 
     foreach ($routeDefinitions as $name => $route)
     {
 
-      
+
       // we only load routes defined in the app.yml from
       if($limit && !in_array($this->getOriginalName($name), $this->routes))
       {
@@ -95,15 +95,15 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
       }
 
       $r = new ReflectionClass($route[0]);
-      
+
       if($r->isSubclassOf('sfRouteCollection'))
       {
 
         $route[1][0]['requirements']['sw_app'] = $this->app;
         $route[1][0]['requirements']['sw_host'] = $this->host;
-        
+
         $collection_route = $r->newInstanceArgs($route[1]);
-        
+
         foreach($collection_route->getRoutes() as $name => $route)
         {
           $routes[$this->app.'.'.$name] = new swEncapsulateRoute($route, $this->host, $this->app);;
@@ -113,7 +113,7 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
       {
         $route[1][2]['sw_app'] = $this->app;
         $route[1][2]['sw_host'] = $this->host;
-          
+
         $routes[$name] = new swEncapsulateRoute($r->newInstanceArgs($route[1]), $this->host, $this->app);
       }
     }

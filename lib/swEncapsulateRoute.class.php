@@ -30,11 +30,6 @@ class swEncapsulateRoute extends sfRoute implements Serializable
     $this->route = $route;
   }
 
-  public function __call($method, $arguments)
-  {
-    return call_user_func_array(array($this->route, $method), $arguments);
-  }
-
   protected function compile()
   {
     if ($this->compiled)
@@ -45,9 +40,14 @@ class swEncapsulateRoute extends sfRoute implements Serializable
     $this->compiled = true;
   }
 
+  public function __call($method, $arguments)
+  {
+    return call_user_func_array(array($this->route, $method), $arguments);
+  }
+
   public function serialize()
   {
-    
+
     return serialize(array($this->route, $this->host, $this->app));
   }
 
@@ -58,16 +58,16 @@ class swEncapsulateRoute extends sfRoute implements Serializable
 
   public function generate($params, $context = array(), $absolute = false)
   {
-    
+
     unset(
       $params['sw_app']
     );
 
     $url = $this->route->generate($params, $context, true);
 
-    
+
     $requirements = $this->route->getRequirements();
-    
+
     if ( isset($requirements['sw_host']) && $requirements['sw_host'] != $context['host'])
     {
       // apply the required host
@@ -77,95 +77,95 @@ class swEncapsulateRoute extends sfRoute implements Serializable
 
     return $url;
   }
-  
+
   public function isBound()
   {
-    
+
     return $this->route->isBound();
   }
-  
+
   public function bind($context, $parameters)
   {
 
     return $this->route->bind($context, $parameters);
   }
-  
+
   public function matchesUrl($url, $context = array())
   {
-    
+
     // always return false to not match current application routes
-    
+
     return false;
   }
-  
+
   public function matchesParameters($params, $context = array())
   {
     // always return false to not match current application routes
-    
+
     return false;
   }
-  
+
   public function getPattern()
   {
 
     return $this->route->getPattern();
   }
-  
+
   public function getRegex()
   {
 
     return $this->route->getRegex();
   }
-  
+
   public function getTokens()
   {
 
     return $this->route->getTokens();
   }
-  
+
   public function getOptions()
   {
 
     return $this->route->getOptions();
   }
-  
+
   public function getVariables()
   {
 
     return $this->route->getVariables();
   }
-  
+
   public function getDefaults()
   {
 
     return $this->route->getDefaults();
   }
-  
-  
+
+
   public function getRequirements()
   {
 
     return $this->route->getRequirements();
   }
-  
+
   public function getDefaultParameters()
   {
 
     return $this->route->getDefaultParameters();
   }
-  
+
   public function setDefaultParameters($parameters)
   {
 
     return $this->route->setDefaultParameters($parameters);
   }
-  
+
   public function getDefaultOptions()
   {
 
     return $this->route->getDefaultOptions();
   }
-  
+
   public function setDefaultOptions($options)
   {
 

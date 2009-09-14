@@ -5,6 +5,8 @@ More info at : http://rabaix.net/en/articles/2009/07/13/cross-link-application-w
 
 ## Installation
 
+The configuration format has been updated. You can now specify the routes to be loaded
+for each environnement.
 
 * Enable the feature, edit your app.yml
 
@@ -24,7 +26,7 @@ More info at : http://rabaix.net/en/articles/2009/07/13/cross-link-application-w
                       prod: rabaix.net/backend      # define the full path for the prod environnement
 
               backend:
-                enabled: on                     
+                enabled: on
                 load:
                   frontend:
                     routes:
@@ -34,7 +36,7 @@ More info at : http://rabaix.net/en/articles/2009/07/13/cross-link-application-w
                       dev: rabaix.net/frontend_dev.php
                       prod: rabaix.net
 
-* Edit your factories.yml
+*edit your factories.yml
 
         [yml]
         all:
