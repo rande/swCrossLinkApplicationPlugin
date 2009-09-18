@@ -36,7 +36,9 @@ for each environnement.
                       dev: rabaix.net/frontend_dev.php
                       prod: rabaix.net
 
-*edit your factories.yml
+  * Note : The configuration format has been updated !
+
+* Edit your factories.yml
 
         [yml]
         all:
