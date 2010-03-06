@@ -30,7 +30,7 @@ class swEncapsulateRoute extends sfRoute implements Serializable
     $this->route = $route;
   }
 
-  protected function compile()
+  public function compile()
   {
     if ($this->compiled)
     {
