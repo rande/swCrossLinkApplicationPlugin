@@ -1,12 +1,25 @@
 # Cross Application Routing
 
-More info at : http://rabaix.net/en/articles/2009/07/13/cross-link-application-with-symfony-part-2
+This plugin allows to transparently used routes defined in other applications with no performance overhead or without loading applications' sfContext .
 
+## Usage :
+
+* From the frontend application, you can link back to the edit form 
+    
+        [php]
+        <?php if($sf_user->isSuperAdmin()):?>
+            <?php link_to('Edit Blog Post', '@backend.edit_post?id='.$blog->getId()) ?>
+        <?php endif ?>
+        
+* Even better, if the edit_post route does not exists in the frontend, then the backend one is used 
+    
+        [php]
+        <?php if($sf_user->isSuperAdmin()):?>
+            <?php link_to('Edit Blog Post', '@edit_post?id='.$blog->getId()) ?>
+        <?php endif ?>
+    
 
 ## Installation
-
-The configuration format has been updated. You can now specify the routes to be loaded
-for each environnement.
 
 * Enable the feature, edit your app.yml
 
@@ -22,8 +35,8 @@ for each environnement.
                       - homepage
                       - edit_blog
                     env:                            # define the environment
-                      dev: rabaix.net/backend.php   # define the full path for the dev environnement
-                      prod: rabaix.net/backend      # define the full path for the prod environnement
+                      dev: rabaix.net/backend.php   # define the full path for the dev environment
+                      prod: rabaix.net/backend      # define the full path for the prod environment
 
               backend:
                 enabled: on
@@ -35,8 +48,6 @@ for each environnement.
                     env:
                       dev: rabaix.net/frontend_dev.php
                       prod: rabaix.net
-
-  * Note : The configuration format has been updated !
 
 * Edit your factories.yml
 
@@ -53,30 +64,19 @@ for each environnement.
 * that's all !!
 
 
-
-## Performance
-
-
-If you load too many routes, the application can be very slow in development. You can
-save seconds by simply turn off the debug options.
-
-        [yml]
-        all:
-          routing:
-            class: swPatternRouting
-            param:
-              debug: false # default is true in dev mode.
-
-Of course don't forget to reload the cache once the routing.yml file is updated
+## Troubleshooting
 
 
-Please take a note that the default cache handler for routing is the sfFileCache.
-This can also slow down the application because php has to serialize and unserialize
-the cache.
+### How to check that externals routes are loaded ? 
 
-Some input :
+Routes from other applications are displayed in the log as : *Connect swEncapsulateRoute "app_name.route_name"*
+If routes are not present then something is wrong in your settings.
+    
+### My settings look ok, but the routes do not appear
 
-* 1150 routes generates a 3MBytes cache file
-* 356 routes generates a 1MBytes cache file
+All routes loaded with an event or dynamically added at runtime cannot be used with this plugin. Routes have to be defined in the routing.yml of each application.
+    
+### symfony's bootstraping get slower after plugin installation
 
-So in production you might need to tweak the routing caching strategy
+This might occurs if you load all routes from others application, it is a good practice to be explicit when you load externals routes : populate the *routes* section with routes you need in the current application.
+
