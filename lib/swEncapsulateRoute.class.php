@@ -109,7 +109,7 @@ class swEncapsulateRoute extends sfRoute implements Serializable
 
     $requirements = $this->route->getRequirements();
 
-    if ( isset($requirements['sw_host']) && $requirements['sw_host'] != $context['host'])
+    if ( isset($requirements['sw_host']) && ($requirements['sw_host'] != $context['host'] || $absolute))
     {
       // apply the required host
       $protocol = $context['is_secure'] ? 'https' : 'http';
