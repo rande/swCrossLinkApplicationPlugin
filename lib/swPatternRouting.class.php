@@ -130,4 +130,32 @@ class swPatternRouting extends sfPatternRouting
 
     return $this->context_routes[$route_name];
   }
+
+
+  /**
+   * this function is only used when the autoregister is disabled
+   *
+   *
+   * @static
+   * @param  $name
+   * @return
+   */
+  static function getCrossApplicationRouteInstance($name) {
+
+    static $route_container;
+
+    if($route_container == null) {
+//      list($app, $name) = explode('.', $name);
+
+      // preload all routes
+      $route_container = new swRouteContainer;
+      $event = new sfEvent($route_container, 'fake_event');
+
+      swToolboxRoutingCrossApplicationRouting::listenToRoutingLoadConfigurationEvent($event);
+    }
+
+    return $route_container->getRoute($name);
+  }
+
+
 }

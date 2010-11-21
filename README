@@ -28,7 +28,8 @@ This plugin allows to transparently used routes defined in other applications wi
           swToolbox:
             cross_link_application:
               frontend:
-                enabled: on                         # enable the feature
+                autoregister: true
+                enabled: true                         # enable the feature
                 load:
                   backend:
                     routes:                         # routes to load, leave empty will load all the routes
@@ -39,7 +40,8 @@ This plugin allows to transparently used routes defined in other applications wi
                       prod: rabaix.net/backend      # define the full path for the prod environment
 
               backend:
-                enabled: on
+                autoregister: true
+                enabled: true
                 load:
                   frontend:
                     routes:
@@ -62,6 +64,20 @@ This plugin allows to transparently used routes defined in other applications wi
         <?php link_to('Edit Blog Post', '@backend.edit_post?id='.$blog->getId()) ?>
 
 * that's all !!
+
+## Autoregister
+
+The autoregister option load the route dynamically, this add a small overhead. You can speed up thing by setting the
+autoregister to `false` and add routes definition in the `routing.yml` file.
+
+        [yml]
+        # encapsulated route
+        backend.edit_blog:
+          url: /blog/edit/:id
+          class: swEncapsulateRoute
+          options:
+            encapsulated:
+              name: backend.edit_blog
 
 
 ## Troubleshooting

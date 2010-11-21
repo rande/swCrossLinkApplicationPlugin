@@ -22,7 +22,8 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
   protected
     $app,
     $host,
-    $routes;
+    $routes,
+    $relections = array();
 
   public function setApp($app)
   {
@@ -76,6 +77,15 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
     return substr($name, strpos($name, '.') + 1);
   }
 
+  public function getReflectionClass($class) {
+
+    if(!isset($this->reflections[$class])) {
+      $this->relections[$class] = new ReflectionClass($class);
+    }
+
+    return $this->relections[$class];
+  }
+  
   public function evaluate($configFiles)
   {
     $routeDefinitions = $this->parse($configFiles);
@@ -86,7 +96,6 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
     foreach ($routeDefinitions as $name => $route)
     {
 
-
       // we only load routes defined in the app.yml from
       if($limit && !in_array($this->getOriginalName($name), $this->routes))
       {
@@ -94,7 +103,7 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
         continue;
       }
 
-      $r = new ReflectionClass($route[0]);
+      $r = $this->getReflectionClass($route[0]);
 
       if($r->isSubclassOf('sfRouteCollection'))
       {
@@ -106,7 +115,8 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
 
         foreach($collection_route->getRoutes() as $name => $route)
         {
-          $routes[$this->app.'.'.$name] = new swEncapsulateRoute($route, $this->host, $this->app);;
+          $routes[$this->app.'.'.$name] = new swEncapsulateRoute(null);
+          $routes[$this->app.'.'.$name]->setRoute($route);
         }
       }
       else
@@ -114,7 +124,10 @@ class swCrossApplicationRoutingConfigHandler extends sfRoutingConfigHandler
         $route[1][2]['sw_app'] = $this->app;
         $route[1][2]['sw_host'] = $this->host;
 
-        $routes[$name] = new swEncapsulateRoute($r->newInstanceArgs($route[1]), $this->host, $this->app);
+        $route_instance = $r->newInstanceArgs($route[1]);
+
+        $routes[$name] = new swEncapsulateRoute(null);
+        $routes[$name]->setRoute($route_instance);
       }
     }
 

@@ -20,14 +20,55 @@ class swEncapsulateRoute extends sfRoute implements Serializable
 {
 
   protected
-    $route,
-    $host,
-    $app;
+    $route
+  ;
 
 
-  public function __construct(sfRoute $route)
+  /**
+   * Constructor.
+   *
+   * Available options:
+   *
+   *  * variable_prefixes:                An array of characters that starts a variable name (: by default)
+   *  * segment_separators:               An array of allowed characters for segment separators (/ and . by default)
+   *  * variable_regex:                   A regex that match a valid variable name ([\w\d_]+ by default)
+   *  * generate_shortest_url:            Whether to generate the shortest URL possible (true by default)
+   *  * extra_parameters_as_query_string: Whether to generate extra parameters as a query string
+   *
+   * @param string $pattern       The pattern to match
+   * @param array  $defaults      An array of default parameter values
+   * @param array  $requirements  An array of requirements for parameters (regexes)
+   * @param array  $options       An array of options
+   */
+  public function __construct($pattern, array $defaults = array(), array $requirements = array(), array $options = array())
+  {
+    $this->pattern      = $pattern;
+    $this->defaults     = $defaults;
+    $this->requirements = $requirements;
+    $this->options      = $options;
+
+    $this->initCrossRouting();
+  }
+
+  public function initCrossRouting()
+  {
+    // pattern is only null when autoregister is on
+    if($this->pattern == null) {
+      return;
+    }
+
+    $route = swPatternRouting::getCrossApplicationRouteInstance($this->options['encapsulated']['name']);
+    $this->setRoute($route->getRoute());
+  }
+
+  public function setRoute(sfRoute $route)
   {
     $this->route = $route;
+  }
+
+  public function getRoute()
+  {
+    return $this->route;
   }
 
   public function compile()
@@ -48,12 +89,12 @@ class swEncapsulateRoute extends sfRoute implements Serializable
   public function serialize()
   {
 
-    return serialize(array($this->route, $this->host, $this->app));
+    return serialize(array($this->route));
   }
 
   public function unserialize($data)
   {
-    list($this->route, $this->host, $this->app) = unserialize($data);
+    list($this->route) = unserialize($data);
   }
 
   public function generate($params, $context = array(), $absolute = false)

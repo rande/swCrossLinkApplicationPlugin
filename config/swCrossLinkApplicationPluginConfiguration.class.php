@@ -19,7 +19,9 @@ class swCrossLinkApplicationPluginConfiguration extends sfPluginConfiguration
       // Cross link application
       $cla = sfConfig::get('app_swToolbox_cross_link_application', array());
 
-      if (array_key_exists($this->configuration->getApplication(), $cla) && $cla[$this->configuration->getApplication()]['enabled'])
+      if (array_key_exists($this->configuration->getApplication(), $cla)
+        && $cla[$this->configuration->getApplication()]['enabled']
+        && $cla[$this->configuration->getApplication()]['autoregister'])
       {
         $this->dispatcher->connect('routing.load_configuration', array('swToolboxRoutingCrossApplicationRouting', 'listenToRoutingLoadConfigurationEvent'));
       }
